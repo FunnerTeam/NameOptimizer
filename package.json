@@ -4,12 +4,12 @@
   "description": "Name Optimizer Application - Full Stack",
   "main": "backend/server.js",
   "engines": {
-    "node": "18.x",
-    "npm": "9.x"
+    "node": "20.x",
+    "npm": "10.x"
   },
   "scripts": {
     "start": "cd backend && npm start",
-    "heroku-postbuild": "npm install && npm run build && cd backend && npm install",
+    "heroku-postbuild": "npm run build && cd backend && npm install",
     "build": "vite build",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
