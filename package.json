@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "cd backend && npm start",
-    "heroku-postbuild": "cd backend && npm install",
+    "heroku-postbuild": "npm run build && cd backend && npm install",
     "build": "vite build",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
