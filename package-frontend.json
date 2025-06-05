@@ -1,19 +1,14 @@
 {
-  "name": "name-optimizer",
-  "version": "1.0.0",
-  "description": "Name Optimizer Application - Full Stack",
-  "main": "backend/server.js",
-  "engines": {
-    "node": "18.x",
-    "npm": "9.x"
-  },
+  "name": "base44-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "cd backend && npm start",
-    "heroku-postbuild": "npm install && npm run build && cd backend && npm install --production",
+    "dev": "vite",
     "build": "vite build",
-    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "dev:frontend": "vite",
-    "dev:backend": "cd backend && npm run dev"
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "heroku-postbuild": "npm run build"
   },
   "dependencies": {
     "@base44/sdk": "^0.1.2",
@@ -67,17 +62,7 @@
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zod": "^3.24.2",
-    "@supabase/supabase-js": "^2.39.3",
-    "cors": "^2.8.5",
-    "csv-parser": "^3.0.0",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
-    "helmet": "^7.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
-    "uuid": "^9.0.1"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -94,9 +79,6 @@
     "globals": "^15.14.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
-    "vite": "^6.1.0",
-    "concurrently": "^7.6.0",
-    "nodemon": "^3.0.2"
-  },
-  "type": "module"
+    "vite": "^6.1.0"
+  }
 }
