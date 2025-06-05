@@ -8,8 +8,8 @@
     "npm": "10.x"
   },
   "scripts": {
-    "start": "cd backend && npm start",
-    "heroku-postbuild": "npm run build && cd backend && npm install",
+    "start": "npm start",
+    "heroku-postbuild": "npm i && npm run build",
     "build": "vite build",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
