@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "cd backend && npm start",
-    "heroku-postbuild": "npm install && npm run build && cd backend && npm install --production",
+    "heroku-postbuild": "npm install && npm run build && cd backend && npm install",
     "build": "vite build",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
@@ -97,6 +97,5 @@
     "vite": "^6.1.0",
     "concurrently": "^7.6.0",
     "nodemon": "^3.0.2"
-  },
-  "type": "module"
+  }
 }
