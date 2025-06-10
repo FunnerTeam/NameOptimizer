@@ -1,14 +1,17 @@
-app = "name-optimizer"
+app = "name-optimizer-frontend"
 primary_region = "ams"
 
 [build]
+  dockerfile = "Dockerfile.frontend"
 
 [env]
   NODE_ENV = "production"
-  PORT = "8080"
+  PORT = "3000"
+  VITE_API_URL = "https://name-optimizer-backend.fly.dev"
+  VITE_GOOGLE_CLIENT_ID = "1093346328647-s5o92uj0q77dsn61e3g9ooe1fjdlpqdj7.apps.googleusercontent.com"
 
 [http_service]
-  internal_port = 8080
+  internal_port = 3000
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
@@ -20,12 +23,12 @@ primary_region = "ams"
   timeout = "2s"
   grace_period = "5s"
   method = "GET"
-  path = "/api/health"
+  path = "/"
 
 [processes]
-  app = "npm start"
+  app = "serve -s dist -l 3000"
 
 [[vm]]
-  memory = '1gb'
+  memory = '256mb'
   cpu_kind = 'shared'
   cpus = 1 

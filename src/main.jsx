@@ -7,7 +7,7 @@ import "@/index.css";
 // Google Client ID - try env variable, fallback to hardcoded
 const GOOGLE_CLIENT_ID =
   import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-  "1093346328647-s5o92uj0q77dsn61e3g9ooe1fjdlpqdj7.apps.googleusercontent.com";
+  "1093346328647-s5o92uj0q77dsn61e3g9ooe1fj0pqdj7.apps.googleusercontent.com";
 
 console.log("GOOGLE_CLIENT_ID:", GOOGLE_CLIENT_ID);
 console.log("Vite env:", import.meta.env);

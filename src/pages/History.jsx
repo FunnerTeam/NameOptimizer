@@ -118,35 +118,42 @@ const HistoryPage = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen p-6">
-        <div className="max-w-2xl mx-auto">
+      <div
+        className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+        dir="rtl"
+      >
+        <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
+            className="mb-10"
           >
-            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
-              <HistoryIcon className="w-8 h-8 text-white" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <HistoryIcon className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                היסטוריית עיבודים
+              </h1>
             </div>
-            <h1 className="text-4xl font-bold text-slate-800 mb-2">
-              היסטוריית עיבודים
-            </h1>
             <p className="text-lg text-slate-600">
               הכנס אימייל כדי לראות את העיבודים הקודמים שלך
             </p>
           </motion.div>
 
-          <Card className="glass-effect border-0 shadow-xl">
+          <Card className="glass-effect border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
             <CardContent className="p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <User className="w-5 h-5 text-blue-600" />
-                <h3 className="text-lg font-semibold text-slate-800">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                  <User className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-800">
                   הזן את האימייל שלך
                 </h3>
               </div>
 
               {error && (
-                <Alert variant="destructive" className="mb-4">
+                <Alert variant="destructive" className="mb-6">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
@@ -156,7 +163,7 @@ const HistoryPage = () => {
                 <Button
                   onClick={loadHistory}
                   disabled={isLoading}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2"
                 >
                   {isLoading ? (
                     <>
@@ -179,63 +186,83 @@ const HistoryPage = () => {
   }
 
   return (
-    <div className="min-h-screen p-6">
+    <div
+      className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+      dir="rtl"
+    >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="mb-10"
         >
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
-            <HistoryIcon className="w-8 h-8 text-white" />
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <HistoryIcon className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                היסטוריית עיבודים
+              </h1>
+              <p className="text-lg text-slate-600 mt-1">
+                {user.email} • {historyData.length} עיבודים
+              </p>
+            </div>
           </div>
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">
-            היסטוריית עיבודים
-          </h1>
-          <p className="text-lg text-slate-600 mb-4">
-            {user.email} - {historyData.length} עיבודים
-          </p>
 
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center">
             <Button
               onClick={loadHistory}
               disabled={isLoading}
               variant="outline"
               size="sm"
+              className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 backdrop-blur-sm"
             >
               <Loader2
                 className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
               />
-              רענן
+              רענן היסטוריה
             </Button>
           </div>
         </motion.div>
 
         {error && (
-          <Alert variant="destructive" className="mb-6">
+          <Alert
+            variant="destructive"
+            className="mb-6 bg-red-50/80 backdrop-blur-sm border-red-200"
+          >
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
         {isLoading ? (
-          <div className="text-center py-12">
-            <Loader2 className="w-8 h-8 mx-auto mb-4 animate-spin text-blue-600" />
-            <p className="text-slate-600">טוען היסטוריה...</p>
-          </div>
-        ) : historyData.length === 0 ? (
-          <Card className="glass-effect border-0 shadow-xl">
+          <Card className="glass-effect border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
             <CardContent className="p-12 text-center">
-              <FileText className="w-16 h-16 mx-auto mb-4 text-slate-400" />
+              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full flex items-center justify-center">
+                <Loader2 className="w-8 h-8 text-white animate-spin" />
+              </div>
               <h3 className="text-xl font-semibold text-slate-800 mb-2">
+                טוען היסטוריה...
+              </h3>
+              <p className="text-slate-600">מחפש את העיבודים שלך</p>
+            </CardContent>
+          </Card>
+        ) : historyData.length === 0 ? (
+          <Card className="glass-effect border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-12 text-center">
+              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-slate-400 to-slate-500 rounded-full flex items-center justify-center">
+                <FileText className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">
                 אין עיבודים קודמים
               </h3>
-              <p className="text-slate-600 mb-4">
+              <p className="text-lg text-slate-600 mb-6">
                 לא נמצאו עיבודים עבור האימייל הזה
               </p>
               <Button
                 onClick={() => (window.location.href = "/upload")}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3"
               >
                 התחל עיבוד חדש
               </Button>
@@ -258,25 +285,27 @@ const HistoryPage = () => {
                     transition={{ delay: index * 0.1 }}
                   >
                     <Card
-                      className={`glass-effect border-0 shadow-lg ${
+                      className={`glass-effect border-0 shadow-xl bg-white/80 backdrop-blur-sm ${
                         isExpired.isExpired ? "opacity-75" : ""
                       }`}
                     >
-                      <CardHeader className="pb-3">
+                      <CardHeader className="pb-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-xl">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                            <FileText className="w-5 h-5 text-blue-600" />
+                            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
+                              <FileText className="w-5 h-5 text-white" />
+                            </div>
                             {record.original_filename}
                           </CardTitle>
                           <div className="flex items-center gap-2">
                             {!isExpired.isExpired && (
-                              <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                              <div className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
                                 <Clock className="w-4 h-4" />
                                 {isExpired.timeLeftFormatted}
                               </div>
                             )}
                             {isExpired.isExpired && (
-                              <div className="flex items-center gap-1 text-red-600 text-sm font-medium">
+                              <div className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
                                 <AlertCircle className="w-4 h-4" />
                                 פג תוקף
                               </div>
@@ -295,21 +324,24 @@ const HistoryPage = () => {
                         </div>
                       </CardHeader>
 
-                      <CardContent className="pt-0">
+                      <CardContent className="pt-4">
                         {/* סיכום שיפורים */}
                         {record.improvements_summary && (
-                          <div className="mb-4 p-3 bg-slate-50 rounded-lg">
-                            <h4 className="font-medium text-slate-800 mb-2 text-sm">
-                              סיכום שיפורים:
+                          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                            <h4 className="font-semibold text-indigo-800 mb-3 text-base">
+                              סיכום שיפורים
                             </h4>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                               {formatSummary(record.improvements_summary).map(
                                 ([key, value]) => (
-                                  <div key={key} className="text-center">
-                                    <div className="font-bold text-blue-600">
+                                  <div
+                                    key={key}
+                                    className="text-center p-3 bg-white/60 rounded-lg"
+                                  >
+                                    <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                                       {value}
                                     </div>
-                                    <div className="text-xs text-slate-600">
+                                    <div className="text-sm text-slate-600 mt-1">
                                       {key}
                                     </div>
                                   </div>
@@ -320,23 +352,21 @@ const HistoryPage = () => {
                         )}
 
                         {/* כפתורי פעולה */}
-                        <div className="flex flex-wrap gap-2">
-                          {record.processed_file_url &&
-                            !isExpired.isExpired && (
-                              <Button
-                                onClick={() =>
-                                  handleDownloadFile(
-                                    record.processed_file_url,
-                                    `${record.original_filename}_cleaned.csv`
-                                  )
-                                }
-                                size="sm"
-                                className="bg-green-600 hover:bg-green-700"
-                              >
-                                <Download className="w-4 h-4 mr-1" />
-                                אנשי קשר מנוקים
-                              </Button>
+                        <div className="flex flex-wrap gap-3 justify-end">
+                          <Button
+                            onClick={() => handleDeleteRecord(record.id)}
+                            disabled={isDeleting(record.id)}
+                            size="sm"
+                            variant="outline"
+                            className="border-red-200 text-red-700 hover:bg-red-50 backdrop-blur-sm"
+                          >
+                            {isDeleting(record.id) ? (
+                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4 mr-1" />
                             )}
+                            מחק
+                          </Button>
 
                           {record.detailed_report_file_url &&
                             !isExpired.isExpired && (
@@ -349,27 +379,29 @@ const HistoryPage = () => {
                                 }
                                 size="sm"
                                 variant="outline"
-                                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                                className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 backdrop-blur-sm"
                               >
                                 <Download className="w-4 h-4 mr-1" />
                                 דוח מפורט
                               </Button>
                             )}
 
-                          <Button
-                            onClick={() => handleDeleteRecord(record.id)}
-                            disabled={isDeleting(record.id)}
-                            size="sm"
-                            variant="outline"
-                            className="border-red-200 text-red-700 hover:bg-red-50"
-                          >
-                            {isDeleting(record.id) ? (
-                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                            ) : (
-                              <Trash2 className="w-4 h-4 mr-1" />
+                          {record.processed_file_url &&
+                            !isExpired.isExpired && (
+                              <Button
+                                onClick={() =>
+                                  handleDownloadFile(
+                                    record.processed_file_url,
+                                    `${record.original_filename}_cleaned.csv`
+                                  )
+                                }
+                                size="sm"
+                                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+                              >
+                                <Download className="w-4 h-4 mr-1" />
+                                אנשי קשר מנוקים
+                              </Button>
                             )}
-                            מחק
-                          </Button>
                         </div>
                       </CardContent>
                     </Card>

@@ -1,3 +1,83 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { KeyRound, Code } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function APISettingsPage() {
+  return (
+    <div
+      className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+      dir="rtl"
+    >
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center">
+              <KeyRound className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              הגדרות API וטוקנים
+            </h1>
+          </div>
+        </motion.div>
+
+        <Card className="glass-effect border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-white rounded-t-2xl">
+            <CardTitle className="text-2xl flex items-center gap-3">
+              <Code className="w-7 h-7" />
+              פיצ&apos;ר בפיתוח
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8 text-center">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="space-y-6"
+            >
+              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+                <Code className="w-10 h-10 text-white" />
+              </div>
+
+              <h2 className="text-2xl font-bold text-slate-800">
+                🚧 הגדרות API בפיתוח 🚧
+              </h2>
+
+              <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                הפיצ&apos;ר של הגדרות API וניהול טוקנים נמצא כרגע בפיתוח פעיל.
+                <br />
+                אנחנו עובדים על מימוש מאובטח ומלא של API עם אימות מתקדם ותיעוד
+                מפורט.
+              </p>
+
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+                <h3 className="text-lg font-semibold text-indigo-800 mb-2">
+                  מה בפיתוח?
+                </h3>
+                <ul className="text-indigo-700 space-y-2 text-right">
+                  <li>• מערכת טוקנים מאובטחת</li>
+                  <li>• תיעוד API מלא ואינטראקטיבי</li>
+                  <li>• ניהול הרשאות מתקדם</li>
+                  <li>• דוגמאות קוד בשפות שונות</li>
+                </ul>
+              </div>
+
+              <p className="text-sm text-slate-500">
+                הפיצ&apos;ר יהיה זמין בקרוב. תודה על הסבלנות! 🙏
+              </p>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/*
+// הקוד המקורי - נשמר להמשך הפיתוח
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -210,19 +290,26 @@ export default function APISettingsPage() {
             </section>
 
             <section>
-              <h3 className="text-xl font-semibold text-slate-700 mb-2">תשובות שגיאה</h3>
-              <p className="text-slate-600 mb-1">במקרה של שגיאה, התשובה תכיל אובייקט JSON עם שדה <code className="text-indigo-600 bg-indigo-50 px-1 rounded">error</code> ותיאור הבעיה. קודי הסטטוס הנפוצים יהיו:</p>
-              <ul className="list-disc list-inside text-slate-600 space-y-1 text-sm">
-                <li><code className="text-red-600 bg-red-50 px-1 rounded">400 Bad Request</code>: קלט לא תקין (למשל, יותר מ-10 רשומות, שדות חסרים, JSON לא תקין).</li>
-                <li><code className="text-red-600 bg-red-50 px-1 rounded">401 Unauthorized</code>: טוקן API לא תקין, פג תוקף או חסר.</li>
-                <li><code className="text-red-600 bg-red-50 px-1 rounded">429 Too Many Requests</code>: יותר מדי בקשות בפרק זמן קצר (אם תוגדר מגבלת קצב).</li>
-                <li><code className="text-red-600 bg-red-50 px-1 rounded">500 Internal Server Error</code>: שגיאה פנימית בשרת במהלך העיבוד.</li>
-              </ul>
+              <h3 className="text-xl font-semibold text-slate-700 mb-2">טיפול בשגיאות</h3>
+              <div className="space-y-2">
+                <div className="p-2 bg-red-50 rounded border border-red-200">
+                  <span className="font-bold text-red-700">401 Unauthorized:</span> <span className="text-red-600">טוקן API חסר או לא תקף</span>
+                </div>
+                <div className="p-2 bg-orange-50 rounded border border-orange-200">
+                  <span className="font-bold text-orange-700">400 Bad Request:</span> <span className="text-orange-600">שגיאה בנתונים שנשלחו (JSON לא תקין, שדות חסרים וכו')</span>
+                </div>
+                <div className="p-2 bg-yellow-50 rounded border border-yellow-200">
+                  <span className="font-bold text-yellow-700">429 Too Many Requests:</span> <span className="text-yellow-600">חרגת ממכסת הבקשות (rate limiting)</span>
+                </div>
+                <div className="p-2 bg-gray-50 rounded border border-gray-200">
+                  <span className="font-bold text-gray-700">500 Internal Server Error:</span> <span className="text-gray-600">שגיאה כללית בשרת</span>
+                </div>
+              </div>
             </section>
-
           </CardContent>
         </Card>
       </div>
     </div>
   );
 }
+*/

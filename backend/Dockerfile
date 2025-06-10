@@ -10,18 +10,15 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install --omit=dev
 
-# Copy application code
+# Copy backend source code
 COPY . .
 
-# Build the frontend
-RUN npm run build
-
 # Expose port
-EXPOSE 8080
+EXPOSE 3001
 
 # Set environment
 ENV NODE_ENV=production
-ENV PORT=8080
+ENV PORT=3001
 
-# Start the application
-CMD ["npm", "start"] 
+# Start the backend server
+CMD ["node", "server.js"] 
