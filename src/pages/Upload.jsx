@@ -4,7 +4,7 @@
 import { useState, useRef } from "react";
 import Papa from "papaparse";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Upload,
@@ -27,6 +27,10 @@ import {
 // הוק אימות ושירותים
 import processingService from "../services/processingService.js";
 import axiosInstance from "../utils/axiosInstance.js";
+import ColumnMappingStep from "../components/ColumnMappingStep.jsx";
+import ProcessingProgress from "../components/ProcessingProgress";
+import FileUploadZone from "../components/FileUploadZone.jsx";
+import ResultsDisplay from "../components/ResultsDisplay.jsx";
 
 const GROQ_API_KEY = "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";
 const USE_GROQ = true; // true = Groq (מהיר, חינמי, יציב), false = OpenAI (יקר, מוגבל, בעייתי)
@@ -710,7 +714,7 @@ export default function UploadPage() {
 
         // המתנה בין קריאות למניעת rate limiting (100 בקשות לדקה = ~600ms בין בקשות)
         if (i < totalRows - 1) {
-          await new Promise((resolve) => setTimeout(resolve, 650));
+          await new Promise((resolve) => setTimeout(resolve, 2300));
         }
       }
 
@@ -954,501 +958,167 @@ export default function UploadPage() {
     switch (currentStep) {
       case APP_STEPS.UPLOAD:
         return (
-          <Card className="glass-effect hover-lift border-0 shadow-xl">
-            <CardContent className="p-8">
-              <div
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                  dragActive
-                    ? "border-teal-500 bg-teal-50"
-                    : "border-slate-300 hover:border-teal-400"
-                }`}
-                onDragEnter={(e) => handleDragEvents(e, true)}
-                onDragLeave={(e) => handleDragEvents(e, false)}
-                onDragOver={(e) => handleDragEvents(e, true)}
-                onDrop={handleDrop}
-              >
-                <Upload className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                <h3 className="text-lg font-semibold text-slate-700 mb-2">
-                  גרור קובץ CSV לכאן או לחץ לבחירה
-                </h3>
-                <p className="text-slate-500 mb-4">
-                  קבצי CSV עד 10MB. מומלץ קידוד UTF-8 לתמיכה בעברית.
-                </p>
-                <div className="mb-4">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <a
-                          href="/processing-defaults"
-                          className="inline-flex items-center text-sm text-teal-600 hover:text-teal-700 underline"
-                        >
-                          <SettingsIcon className="w-4 h-4 mr-1" />
-                          התאם הגדרות עיבוד
-                        </a>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          קובע כיצד המערכת תטפל בנתונים (תארים, פורמט טלפון,
-                          מגדר וכו')
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".csv"
-                  onChange={(e) =>
-                    handleFileSelectAndInitialParse(e.target.files[0])
-                  }
-                  className="hidden"
-                />
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="bg-teal-600 hover:bg-teal-700"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  בחר קובץ CSV
-                </Button>
-                {fileName && (
-                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-green-700 font-medium">
-                      קובץ נבחר: {fileName}
-                    </p>
-                    <Button
-                      onClick={handleConfirmColumnMapping}
-                      className="mt-2 bg-green-600 hover:bg-green-700"
-                      disabled={isProcessing}
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      {isProcessing ? "מעבד..." : "התחל עיבוד"}
-                    </Button>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="h-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center"
+          >
+            <div className="w-full max-w-6xl mx-auto">
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden">
+                <CardHeader className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white p-8 text-center">
+                  <div className="w-20 h-20 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
+                    <Upload className="w-8 h-8 text-white" />
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                  <CardTitle className="text-3xl font-bold mb-2 flex items-center justify-center gap-3">
+                    <Upload className="w-8 h-8" />
+                    העלאת קובץ CSV
+                  </CardTitle>
+                  <p className="text-lg text-indigo-100">
+                    העלה את קובץ אנשי הקשר שלך לתהליך טיוב והעשרה
+                  </p>
+                </CardHeader>
+
+                <CardContent className="p-0">
+                  {errorMessage && (
+                    <div className="p-8 pb-0">
+                      <Alert
+                        variant="destructive"
+                        className="border-red-200 bg-red-50"
+                      >
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription className="text-red-700">
+                          {errorMessage}
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  )}
+
+                  <FileUploadZone
+                    onFileSelect={(file) => {
+                      if (file) {
+                        handleFileSelectAndInitialParse(file);
+                      } else {
+                        setFileName("");
+                        setCsvData([]);
+                        setCsvHeaders([]);
+                        setColumnMapping({});
+                        setErrorMessage("");
+                      }
+                    }}
+                    onDragEvents={handleDragEvents}
+                    onDrop={handleDrop}
+                    dragActive={dragActive}
+                    selectedFile={fileName ? { name: fileName, size: 0 } : null}
+                    fileInputRef={fileInputRef}
+                  />
+
+                  {fileName && (
+                    <div className="p-8 pt-0">
+                      <div className="text-center">
+                        <div className="mb-4">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <a
+                                  href="/processing-defaults"
+                                  className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 underline font-medium transition-colors duration-200"
+                                >
+                                  <SettingsIcon className="w-5 h-5" />
+                                  התאם הגדרות עיבוד
+                                </a>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>
+                                  קובע כיצד המערכת תטפל בנתונים (תארים, פורמט
+                                  טלפון, מגדר וכו&apos;)
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        <Button
+                          onClick={handleConfirmColumnMapping}
+                          className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+                          disabled={isProcessing}
+                        >
+                          <Sparkles className="w-5 h-5 ml-2" />
+                          {isProcessing ? "מעבד..." : "המשך לשיוך עמודות"}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </motion.div>
         );
 
       case APP_STEPS.COLUMN_MAPPING:
         return (
-          <Card className="glass-effect border-0 shadow-xl">
-            <CardContent className="p-8">
-              <div className="text-center mb-6">
-                <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center">
-                  <SettingsIcon className="w-10 h-10 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">
-                  שיוך עמודות
-                </h2>
-                <p className="text-slate-600">
-                  בחר איזו עמודה בקובץ מתאימה לכל שדה במערכת
-                </p>
-              </div>
-
-              {errorMessage && (
-                <Alert variant="destructive" className="mb-4">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                {[
-                  {
-                    key: "שם",
-                    label: "שם מלא",
-                    required: false,
-                    description: "העמודה שמכילה את השם המלא של איש הקשר",
-                  },
-                  {
-                    key: "שם_פרטי",
-                    label: "שם פרטי",
-                    required: false,
-                    description: "העמודה שמכילה רק את השם הפרטי",
-                  },
-                  {
-                    key: "שם_משפחה",
-                    label: "שם משפחה",
-                    required: false,
-                    description: "העמודה שמכילה רק את שם המשפחה",
-                  },
-                  {
-                    key: "טלפון",
-                    label: "מספר טלפון",
-                    required: true,
-                    description: "העמודה שמכילה את מספר הטלפון",
-                  },
-                  {
-                    key: "אימייל",
-                    label: "כתובת אימייל",
-                    required: false,
-                    description: "העמודה שמכילה כתובת אימייל (אופציונלי)",
-                  },
-                  {
-                    key: "כתובת",
-                    label: "כתובת",
-                    required: false,
-                    description: "העמודה שמכילה כתובת מגורים (אופציונלי)",
-                  },
-                ].map((field) => (
-                  <div key={field.key} className="bg-slate-50 p-4 rounded-lg">
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      {field.label}
-                      {field.required && (
-                        <span className="text-red-500 mr-1">*</span>
-                      )}
-                    </label>
-                    <select
-                      value={columnMapping[field.key] || ""}
-                      onChange={(e) =>
-                        setColumnMapping((prev) => ({
-                          ...prev,
-                          [field.key]: e.target.value,
-                        }))
-                      }
-                      className="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    >
-                      <option value="">-- בחר עמודה --</option>
-                      {csvHeaders.map((header) => (
-                        <option key={header} value={header}>
-                          {header}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {field.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="bg-blue-50 p-4 rounded-lg mb-6">
-                <h3 className="font-medium text-blue-800 mb-2">
-                  תצוגה מקדימה מהקובץ:
-                </h3>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
-                    <thead>
-                      <tr className="bg-blue-100">
-                        {csvHeaders.map((header) => (
-                          <th
-                            key={header}
-                            className="px-3 py-2 text-right border border-blue-200 font-medium text-blue-900"
-                          >
-                            {header}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {csvData.slice(0, 3).map((row, index) => (
-                        <tr key={index} className="bg-white">
-                          {csvHeaders.map((header) => (
-                            <td
-                              key={header}
-                              className="px-3 py-2 border border-blue-200 text-blue-800"
-                            >
-                              {row[header] || "-"}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                {csvData.length > 3 && (
-                  <p className="text-xs text-blue-600 mt-2">
-                    מוצגות 3 שורות ראשונות מתוך {csvData.length} שורות
-                  </p>
-                )}
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={handleConfirmColumnMapping}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                  disabled={
-                    !columnMapping["טלפון"] ||
-                    (!columnMapping["שם"] &&
-                      !(columnMapping["שם_פרטי"] && columnMapping["שם_משפחה"]))
-                  }
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  התחל עיבוד
-                </Button>
-                <Button
-                  onClick={resetStateForNewUpload}
-                  variant="outline"
-                  className="flex-1"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  בחר קובץ אחר
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <ColumnMappingStep
+            csvData={csvData}
+            csvHeaders={csvHeaders}
+            columnMapping={columnMapping}
+            setColumnMapping={setColumnMapping}
+            handleConfirmColumnMapping={handleConfirmColumnMapping}
+            resetStateForNewUpload={resetStateForNewUpload}
+          />
         );
 
       case APP_STEPS.PROCESSING:
         return (
-          <Card className="glass-effect border-0 shadow-xl">
-            <CardContent className="p-8 text-center">
-              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl flex items-center justify-center">
-                <Sparkles className="w-10 h-10 text-white animate-pulse" />
-              </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-4">
-                מעבד את הנתונים...
-              </h2>
-              <p className="text-slate-600 mb-4">
-                האינטלגנציה המלאכותית מנתחת ומשפרת את אנשי הקשר שלך
-              </p>
-
-              <div className="mb-4">
-                <div className="bg-slate-200 h-3 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-teal-500 to-emerald-600 transition-all duration-300"
-                    style={{ width: `${uploadProgress}%` }}
-                  ></div>
-                </div>
-                <p className="text-sm text-slate-500 mt-2">
-                  {uploadProgress}% הושלם
-                </p>
-              </div>
-
-              {processingStep && (
-                <div className="bg-slate-50 p-3 rounded-lg">
-                  <p className="text-sm text-slate-600">מעבד כעת:</p>
-                  <p className="font-medium text-slate-800">{processingStep}</p>
-                </div>
-              )}
-
-              {userSettings && (
-                <div className="mt-4 bg-teal-50 p-3 rounded-lg text-right">
-                  <p className="text-sm text-teal-700 font-medium mb-2">
-                    הגדרות עיבוד פעילות:
-                  </p>
-                  <div className="text-xs text-teal-600 space-y-1">
-                    <p>
-                      • טיפול בתארים:{" "}
-                      {userSettings.name_title_handling === "remove"
-                        ? "הסר תארים"
-                        : userSettings.name_title_handling ===
-                          "prefix_firstname"
-                        ? "הוסף לשם פרטי"
-                        : "העבר לשדה נפרד"}
-                    </p>
-                    <p>
-                      • פורמט טלפון:{" "}
-                      {userSettings.phone_format_preference === "with_hyphen"
-                        ? "עם מקף"
-                        : "רק ספרות"}
-                    </p>
-                    <p>
-                      • שיוך מגדר:{" "}
-                      {userSettings.gender_assignment ? "מופעל" : "כבוי"}
-                    </p>
-                    <p>
-                      • Truecaller:{" "}
-                      {userSettings.truecaller_usage === "never"
-                        ? "כבוי"
-                        : userSettings.truecaller_usage === "if_name_missing"
-                        ? "רק כשחסר שם"
-                        : "תמיד העשר"}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <ProcessingProgress
+            processing={{
+              status: "processing",
+              total_rows: csvData.length,
+              processed_rows: Math.round(
+                (uploadProgress / 100) * csvData.length
+              ),
+              original_filename: fileName,
+              current_step: processingStep,
+              user_settings: userSettings,
+            }}
+          />
         );
 
-      case APP_STEPS.RESULTS:
+      case APP_STEPS.RESULTS: {
+        // יצירת אובייקט processing עבור קומפוננטת ResultsDisplay
+        const processingObject = {
+          status: "completed",
+          original_filename: fileName,
+          processed_rows: processedData?.["אנשי_קשר_משופרים"]?.length || 0,
+          total_rows: csvData.length,
+          improvements_summary: processedData?.["סיכום_שיפורים_כללי"] || {},
+          processed_file_url: null, // יש לנו פונקציה להורדה במקום URL
+          start_time: null, // לא זמין במימוש הנוכחי
+          end_time: null, // לא זמין במימוש הנוכחי
+        };
+
+        // יצירת קובץ דוח מפורט
+        const detailedReportBlob =
+          detailedReport && detailedReport.length > 0
+            ? new Blob([Papa.unparse(detailedReport)], {
+                type: "text/csv;charset=utf-8",
+              })
+            : null;
+
+        if (detailedReportBlob) {
+          detailedReportBlob.name = `דוח_מפורט_${
+            fileName?.replace(".csv", "") || "עיבוד"
+          }.csv`;
+        }
+
         return (
-          <Card className="glass-effect border-0 shadow-xl">
-            <CardContent className="p-8">
-              <div className="text-center mb-6">
-                <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center">
-                  <CheckCircle className="w-10 h-10 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">
-                  העיבוד הושלם בהצלחה!
-                </h2>
-              </div>
-
-              {saveMessage && (
-                <Alert className="mb-4 bg-green-50 border-green-200">
-                  <Save className="h-4 w-4 text-green-600" />
-                  <AlertDescription className="text-green-700">
-                    {saveMessage}
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              {saveError && (
-                <Alert variant="destructive" className="mb-4">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{saveError}</AlertDescription>
-                </Alert>
-              )}
-
-              {isSavingToServer && (
-                <Alert className="mb-4 bg-blue-50 border-blue-200">
-                  <Clock className="h-4 w-4 text-blue-600 animate-pulse" />
-                  <AlertDescription className="text-blue-700">
-                    שומר בהיסטוריה...
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              {processedData?.["סיכום_שיפורים_כללי"] && (
-                <div className="mb-6 p-4 bg-slate-50 rounded-lg">
-                  <h3 className="font-semibold text-slate-800 mb-3">
-                    סיכום שיפורים:
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                    {Object.entries(processedData["סיכום_שיפורים_כללי"]).map(
-                      ([key, value]) => (
-                        <div
-                          key={key}
-                          className="text-center p-2 bg-white rounded border"
-                        >
-                          <div className="font-bold text-teal-600 text-lg">
-                            {value}
-                          </div>
-                          <div className="text-slate-600">{key}</div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {userSettings && (
-                <div className="mb-6 p-4 bg-teal-50 rounded-lg text-right">
-                  <h3 className="font-semibold text-teal-800 mb-3">
-                    הגדרות שהוחלו בעיבוד:
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <div className="bg-white p-3 rounded">
-                      <span className="font-medium text-teal-700">
-                        טיפול בתארים:
-                      </span>
-                      <div className="text-teal-600 mt-1">
-                        {userSettings.name_title_handling === "remove"
-                          ? "הסר תארים"
-                          : userSettings.name_title_handling ===
-                            "prefix_firstname"
-                          ? "הוסף לשם פרטי"
-                          : "העבר לשדה נפרד"}
-                      </div>
-                    </div>
-                    <div className="bg-white p-3 rounded">
-                      <span className="font-medium text-teal-700">
-                        פורמט טלפון:
-                      </span>
-                      <div className="text-teal-600 mt-1">
-                        {userSettings.phone_format_preference === "with_hyphen"
-                          ? "עם מקף (050-1234567)"
-                          : "רק ספרות (0501234567)"}
-                      </div>
-                    </div>
-                    <div className="bg-white p-3 rounded">
-                      <span className="font-medium text-teal-700">
-                        שיוך מגדר:
-                      </span>
-                      <div className="text-teal-600 mt-1">
-                        {userSettings.gender_assignment
-                          ? "מופעל - נוסף מגדר משוער"
-                          : "כבוי"}
-                      </div>
-                    </div>
-                    <div className="bg-white p-3 rounded">
-                      <span className="font-medium text-teal-700">
-                        טיפול בווריאציות:
-                      </span>
-                      <div className="text-teal-600 mt-1">
-                        {userSettings.variation_handling ===
-                        "standardize_add_note"
-                          ? "תקנן והוסף הערה"
-                          : "השאר מקורי"}
-                      </div>
-                    </div>
-                    <div className="bg-white p-3 rounded">
-                      <span className="font-medium text-teal-700">
-                        Truecaller:
-                      </span>
-                      <div className="text-teal-600 mt-1">
-                        {userSettings.truecaller_usage === "never"
-                          ? "כבוי"
-                          : userSettings.truecaller_usage === "if_name_missing"
-                          ? "העשר רק כשחסר שם"
-                          : "תמיד העשר מטלפון"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* מידע על שדות נוספים שנוצרו */}
-                  <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                    <h4 className="font-medium text-emerald-800 mb-2">
-                      שדות נוספים ב-CSV:
-                    </h4>
-                    <div className="text-xs text-emerald-700 space-y-1">
-                      {userSettings.name_title_handling ===
-                        "separate_field" && (
-                        <p>✓ שדה "תואר" - תארי כבוד שהועברו לשדה נפרד</p>
-                      )}
-                      {userSettings.gender_assignment && (
-                        <p>✓ שדה "מגדר" - שיוך מגדר אוטומטי לפי השם</p>
-                      )}
-                      {userSettings.truecaller_usage !== "never" && (
-                        <p>
-                          ✓ שדה "
-                          {userSettings.truecaller_name_field ||
-                            "שם מ-Truecaller"}
-                          " - העשרת מידע מטלפון
-                        </p>
-                      )}
-                      {!userSettings.gender_assignment &&
-                        userSettings.name_title_handling !== "separate_field" &&
-                        userSettings.truecaller_usage === "never" && (
-                          <p className="text-slate-500">לא נוצרו שדות נוספים</p>
-                        )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={handleDownloadCleaned}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                  disabled={!processedData?.["אנשי_קשר_משופרים"]}
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  הורד אנשי קשר משופרים
-                </Button>
-                <Button
-                  onClick={handleDownloadDetailed}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
-                  disabled={!detailedReport || detailedReport.length === 0}
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  הורד דוח מפורט
-                </Button>
-                <Button
-                  onClick={resetStateForNewUpload}
-                  variant="outline"
-                  className="flex-1"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  העלה קובץ חדש
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <ResultsDisplay
+            processing={processingObject}
+            detailedReportFile={detailedReportBlob}
+            onReset={resetStateForNewUpload}
+            onDownloadMain={handleDownloadCleaned}
+            onDownloadDetailed={handleDownloadDetailed}
+          />
         );
+      }
 
       case APP_STEPS.ERROR:
         return (
@@ -1479,75 +1149,9 @@ export default function UploadPage() {
     }
   };
 
-  const getPageTitle = () => {
-    switch (currentStep) {
-      case APP_STEPS.UPLOAD:
-        return "העלאת קובץ CSV";
-      case APP_STEPS.COLUMN_MAPPING:
-        return "שיוך עמודות";
-      case APP_STEPS.PROCESSING:
-        return "עיבוד נתונים";
-      case APP_STEPS.RESULTS:
-        return "תוצאות העיבוד";
-      case APP_STEPS.ERROR:
-        return "שגיאה בתהליך";
-      default:
-        return "טיוב והעשרת נתונים";
-    }
-  };
-
-  const getPageIcon = () => {
-    switch (currentStep) {
-      case APP_STEPS.UPLOAD:
-        return <Upload className="w-8 h-8 text-white" />;
-      case APP_STEPS.COLUMN_MAPPING:
-        return <SettingsIcon className="w-8 h-8 text-white" />;
-      case APP_STEPS.PROCESSING:
-        return <Sparkles className="w-8 h-8 text-white" />;
-      case APP_STEPS.RESULTS:
-        return <CheckCircle className="w-8 h-8 text-white" />;
-      case APP_STEPS.ERROR:
-        return <AlertCircle className="w-8 h-8 text-white" />;
-      default:
-        return <Sparkles className="w-8 h-8 text-white" />;
-    }
-  };
-
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <div className="inline-flex items-center gap-3 mb-4">
-            <div
-              className={`w-16 h-16 bg-gradient-to-br ${
-                currentStep === APP_STEPS.ERROR
-                  ? "from-red-500 to-rose-600"
-                  : "from-teal-600 to-emerald-600"
-              } rounded-2xl flex items-center justify-center`}
-            >
-              {getPageIcon()}
-            </div>
-          </div>
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">
-            {getPageTitle()}
-          </h1>
-          {currentStep === APP_STEPS.UPLOAD && errorMessage && (
-            <Alert
-              variant="destructive"
-              className="border-red-200 bg-red-50 mb-4"
-            >
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-red-700">
-                {errorMessage}
-              </AlertDescription>
-            </Alert>
-          )}
-        </motion.div>
-
+    <div className="h-full">
+      <div className="max-w-[95vw] mx-auto p-6 h-full">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
@@ -1555,6 +1159,7 @@ export default function UploadPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
+            className="h-full"
           >
             {renderStepContent()}
           </motion.div>

@@ -1,15 +1,15 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, X } from "lucide-react"; // Changed FileSpreadsheet to FileText
+import { Upload, X, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import PropTypes from "prop-types";
 
-export default function FileUploadZone({ 
-  onFileSelect, 
-  onDragEvents, 
-  onDrop, 
-  dragActive, 
-  selectedFile, 
-  fileInputRef 
+export default function FileUploadZone({
+  onFileSelect,
+  onDragEvents,
+  onDrop,
+  dragActive,
+  selectedFile,
+  fileInputRef,
 }) {
   const handleFileInput = (e) => {
     const file = e.target.files[0];
@@ -21,7 +21,7 @@ export default function FileUploadZone({
   const removeFile = () => {
     onFileSelect(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -30,7 +30,7 @@ export default function FileUploadZone({
       <input
         ref={fileInputRef}
         type="file"
-        accept=".csv" // Changed to accept only CSV
+        accept=".csv"
         onChange={handleFileInput}
         className="hidden"
       />
@@ -38,9 +38,9 @@ export default function FileUploadZone({
       {!selectedFile ? (
         <motion.div
           className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
-            dragActive 
-              ? "border-teal-400 bg-teal-50" 
-              : "border-slate-300 hover:border-teal-400"
+            dragActive
+              ? "border-indigo-500 bg-indigo-50 scale-105"
+              : "border-slate-300 hover:border-indigo-400 hover:bg-slate-50"
           }`}
           onDragEnter={(e) => onDragEvents(e, true)}
           onDragLeave={(e) => onDragEvents(e, false)}
@@ -49,55 +49,72 @@ export default function FileUploadZone({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl flex items-center justify-center">
-            <Upload className="w-10 h-10 text-white" />
+          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center">
+            <Upload className="w-8 h-8 text-indigo-600" />
           </div>
-          
-          <h3 className="text-2xl font-bold text-slate-800 mb-3">העלה קובץ <strong className="text-teal-700">CSV</strong></h3>
-          <p className="text-slate-600 mb-6 max-w-md mx-auto">
-            גרור ושחרר את קובץ ה-<strong className="text-teal-700">CSV</strong> שלך כאן, או לחץ כדי לבחור קובץ
+
+          <h3 className="text-2xl font-bold text-slate-800 mb-3">
+            גרור קובץ CSV לכאן או לחץ לבחירה
+          </h3>
+          <p className="text-slate-600 mb-6 text-lg">
+            קבצי CSV עד 10MB. מומלץ קידוד UTF-8 לתמיכה בעברית.
           </p>
-          
-          <Button 
+
+          <Button
             onClick={() => fileInputRef.current?.click()}
-            size="lg"
-            className="bg-gradient-to-l from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 px-8 py-6 text-lg rounded-xl shadow-lg hover-lift"
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
           >
-            <FileText className="w-5 h-5 ml-2" /> {/* Changed Icon */}
-            בחר קובץ
+            <Upload className="w-5 h-5 ml-2" />
+            בחר קובץ CSV
           </Button>
-          
+
           <div className="mt-6 text-sm text-slate-500">
-            <p>פורמט נתמך: <strong className="text-teal-700">.csv</strong></p>
+            <p>
+              פורמט נתמך: <strong className="text-indigo-600">.csv</strong>
+            </p>
             <p>גודל מקסימלי: 10MB</p>
           </div>
         </motion.div>
       ) : (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="border-2 border-green-300 bg-green-50 rounded-2xl p-8 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-6 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl"
         >
-          <div className="w-16 h-16 mx-auto mb-4 bg-green-500 rounded-xl flex items-center justify-center">
-            <FileText className="w-8 h-8 text-white" /> {/* Changed Icon */}
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-green-700 font-semibold text-lg">
+              קובץ נבחר: {selectedFile.name}
+            </h3>
           </div>
-          
-          <h3 className="text-xl font-semibold text-green-800 mb-2">קובץ נבחר</h3>
-          <p className="text-green-700 mb-4 text-lg font-medium">{selectedFile.name}</p>
-          <p className="text-green-600 text-sm mb-6">
+
+          <p className="text-green-600 text-sm mb-4 text-center">
             גודל: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
           </p>
-          
-          <Button
-            variant="outline"
-            onClick={removeFile}
-            className="border-green-300 text-green-700 hover:bg-green-100"
-          >
-            <X className="w-4 h-4 ml-1" />
-            הסר קובץ
-          </Button>
+
+          <div className="flex gap-3 justify-center">
+            <Button
+              variant="outline"
+              onClick={removeFile}
+              className="border-green-300 text-green-700 hover:bg-green-100 rounded-xl"
+            >
+              <X className="w-4 h-4 ml-1" />
+              הסר קובץ
+            </Button>
+          </div>
         </motion.div>
       )}
     </div>
   );
 }
+
+FileUploadZone.propTypes = {
+  onFileSelect: PropTypes.func.isRequired,
+  onDragEvents: PropTypes.func.isRequired,
+  onDrop: PropTypes.func.isRequired,
+  dragActive: PropTypes.bool.isRequired,
+  selectedFile: PropTypes.object,
+  fileInputRef: PropTypes.object.isRequired,
+};

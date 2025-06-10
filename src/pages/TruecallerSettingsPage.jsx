@@ -1,3 +1,83 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PhoneOutgoing, Wrench } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function TruecallerSettingsPage() {
+  return (
+    <div
+      className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+      dir="rtl"
+    >
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-sky-500 rounded-2xl flex items-center justify-center">
+              <PhoneOutgoing className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 bg-clip-text text-transparent">
+              אינטגרציית Truecaller
+            </h1>
+          </div>
+        </motion.div>
+
+        <Card className="glass-effect border-0 shadow-2xl bg-white/80 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-white rounded-t-2xl">
+            <CardTitle className="text-2xl flex items-center gap-3">
+              <Wrench className="w-7 h-7" />
+              פיצ&apos;ר בפיתוח
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-8 text-center">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="space-y-6"
+            >
+              <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-400 to-sky-500 rounded-full flex items-center justify-center">
+                <PhoneOutgoing className="w-10 h-10 text-white" />
+              </div>
+
+              <h2 className="text-2xl font-bold text-slate-800">
+                🚧 אינטגרציית Truecaller בפיתוח 🚧
+              </h2>
+
+              <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                הפיצ&apos;ר של אינטגרציית Truecaller להעשרת נתוני אנשי קשר נמצא
+                כרגע בפיתוח פעיל.
+                <br />
+                אנחנו עובדים על חיבור מלא לשירותי Truecaller API.
+              </p>
+
+              <div className="bg-gradient-to-r from-blue-50 to-sky-50 p-6 rounded-xl border border-blue-200">
+                <h3 className="text-lg font-semibold text-blue-800 mb-2">
+                  מה בפיתוח?
+                </h3>
+                <ul className="text-blue-700 space-y-2 text-right">
+                  <li>• חיבור מאובטח ל-Truecaller API</li>
+                  <li>• ניהול מפתחות API</li>
+                  <li>• העשרת נתוני טלפון ואנשי קשר</li>
+                  <li>• זיהוי ואימות מספרי טלפון</li>
+                </ul>
+              </div>
+
+              <p className="text-sm text-slate-500">
+                הפיצ&apos;ר יהיה זמין בקרוב. תודה על הסבלנות! 🙏
+              </p>
+            </motion.div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/*
+// הקוד המקורי - נשמר להמשך הפיתוח
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -159,3 +239,4 @@ export default function TruecallerSettingsPage() {
     </motion.div>
   );
 }
+*/
